@@ -1,0 +1,745 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<head>
+	<title>Earthquakes</title>
+	<meta name="description" content="website description" />
+	<meta name="keywords" content="website keywords, website keywords" />
+	<meta http-equiv="content-type" content="text/html; charset=windows-1252" />
+	<link rel="stylesheet" type="text/css" href="css/style.css" />
+	<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+	<link rel="icon" type="image/png" href="images/icons/favicon-16x16.png">
+	<script type="text/javascript" src="js/modernizr-1.5.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.3/d3.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/topojson/1.6.9/topojson.min.js"></script>
+	<script src="./datamaps.world.min.js"></script>
+	<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+	<script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+	<script src="./heatmap.js"></script>
+
+	<script>
+		function displayNewContent(newc)
+		{
+		document.getElementById("content").src=newc;
+		}
+	</script>
+
+</head>
+
+<body>
+
+	<div id="main">
+	<header>
+	  <div id="strapline">
+	    <div id="welcome_slogan">
+	      <h3>Jon <span>Ruffin</span></h3>
+	    </div>
+      </div>  
+	  <nav>
+	    <div id="menubar">
+          <ul id="nav">
+            <li><a href="index.html">Home</a></li>
+            <li class="current"><a href="projects.html">Latest Projects</a></li>
+            <li><a href="./Resume.pdf">Resume</a></li>
+			<li><a href="contact.html">Contact</a></li>
+          </ul>
+        </div>	
+      </nav>
+    </header>
+<div id="hurricane_content">
+	<div class="hurrsidebar_container">
+		<div class="sidebar">
+			<div class="sidebar_item">
+				<form id = "parameters">
+				<p>
+					Years: <span id="startyear">1900</span> - <span id="endyear">2007</span><br>
+				</p>
+				<div id="year"></div><br>
+
+				<p>
+					Latitude: <span id="startlat">-90</span> - <span id="endlat">90</span><br>
+				</p>
+				<div id="lat"></div><br>
+				
+				<p>
+					Longitude: <span id="startlon">-220</span> - <span id="endlon">180</span><br>
+				</p>
+				<div id="lon"></div><br>
+
+				<p>
+					Depth <span id="startdepth">0</span> - <span id="enddepth">720</span><br>
+				</p>
+				<div id="depth"></div><br>
+				
+				<p>
+					Richter Scale <span id="startscale">0</span> - <span id="endscale">10</span><br>
+				</p>
+				<div id="scale"></div><br>
+				
+				<p>
+					Radius: <span id="radius">2</span><br>
+				</p>
+				<div id="rad"></div><br>
+				
+				<p>
+					Gridsize: <span id="gridsize">50</span><br>
+				</p>
+				<div id="boxes"></div><br>
+				Show grid <input type="checkbox" id="showgrid" onClick="showGrid()">
+				<br>
+				<br>
+				Heatmap Controls:
+				<br>
+				<br>
+				Show heatmap <input type="checkbox" id="showheatmap" onClick="generateHeatmap()">
+				</form>
+				<br>
+				<br>
+				Initial years: <input type="text" id="initialYear1" size="5" value="1900"> to <input type="text" id="initialYear2" size="5" value="1920"><br>
+				Final years: <input type="text" id="finalYear1" size="5" value="1987"> to <input type="text" id="finalYear2" size="5" value="2007">
+				<br>
+				<button type="button" onclick="heatmapEvolution()">View heatmap evolution</button>
+				<form>
+				Richter Scale: 
+				<input type="radio" name="category" id="cat1" onClick="generateHeatmap()" checked>1
+				<input type="radio" name="category" id="cat2" onClick="generateHeatmap()">2
+				<input type="radio" name="category" id="cat3" onClick="generateHeatmap()">3
+				<input type="radio" name="category" id="cat4" onClick="generateHeatmap()">4
+				<input type="radio" name="category" id="cat5" onClick="generateHeatmap()">5
+				<input type="radio" name="category" id="cat6" onClick="generateHeatmap()">6
+				<input type="radio" name="category" id="cat7" onClick="generateHeatmap()">7
+				<input type="radio" name="category" id="cat8" onClick="generateHeatmap()">8
+				<input type="radio" name="category" id="cat9" onClick="generateHeatmap()">9
+				<input type="radio" name="category" id="cat10" onClick="generateHeatmap()">10
+				</form>
+				<br>
+				Adjust the sliders to filter which earthquakes are shown.  To see a time evolution of the heatmap, choose a range of initial years and a range of final years (both ranges must be the same size) and press
+				"View heatmap evolution". An example of year intervals is selected by default.
+			</div>
+		</div>
+	</div>
+	<div id="content">
+		<div class="map">
+		<br>
+			<div id="container" style="margin:auto; width: 1200px; height: 700px; border: 50px;border-color:'blue'"></div>
+			<div id="heatmap" style="width: 1200px; height: 700px;"></div>
+			<div id="grid"></div>
+		</div>
+	</div>
+</div>
+</div>
+</div>
+<footer>
+	<a href="index.html">Home</a> | <a href="projects.html">Latest Projects</a> | <a href="./Resume.pdf">Resume</a> | <a href="./contact.html">Contact</a><br/><br/>
+</footer>
+</body>
+
+<script>
+generateHeatmap();
+$(function() {
+    $("#year").slider({
+      range: true,
+      min: 1900,
+      max: 2007,
+      values: [1900, 2007],
+      slide: function(event, ui) {
+		var minyear = ui.values[0];
+		var maxyear = ui.values[1];
+		var whichSlider = "year"
+		var checkbox = document.getElementById("showheatmap");
+		if(checkbox.checked == false){
+			plotQuakes(minyear,maxyear,whichSlider);
+		} else if(checkbox.checked == true){
+			plotQuakes(minyear,maxyear,whichSlider);
+			document.getElementById("heatmap").innerHTML="";
+			generateHeatmap();
+		}
+		
+      }
+    });
+  });
+
+$(function() {
+    $("#lat").slider({
+      range: true,
+      min: -90,
+      max: 90,
+      values: [-90, 90],
+      slide: function(event, ui) {
+		var whichSlider = "lat"
+		var minlat = ui.values[0];
+		var maxlat = ui.values[1];
+		var checkbox = document.getElementById("showheatmap");
+		if(checkbox.checked == false){
+			plotQuakes(minlat,maxlat,whichSlider);
+		} else if(checkbox.checked == true){
+			plotQuakes(minlat,maxlat,whichSlider);
+			document.getElementById("heatmap").innerHTML="";
+			generateHeatmap();
+		}
+      }
+    });
+  });
+
+$(function() {
+    $("#lon").slider({
+      range: true,
+      min: -220,
+      max: 180,
+      values: [-220, 180],
+      slide: function(event, ui) {
+		var whichSlider = "lon"
+		var minlon = ui.values[0];
+		var maxlon = ui.values[1];
+		var checkbox = document.getElementById("showheatmap");
+		if(checkbox.checked == false){
+			plotQuakes(minlon,maxlon,whichSlider);
+		} else if(checkbox.checked == true){
+			plotQuakes(minlon,maxlon,whichSlider);
+			document.getElementById("heatmap").innerHTML="";
+			generateHeatmap();
+		}
+      }
+    });
+  });
+
+$(function() {
+    $("#depth").slider({
+      range: true,
+      min: 0,
+      max: 720,
+      values: [0, 720],
+      slide: function(event, ui) {
+		var whichSlider = "depth"
+		var mindepth = ui.values[0];
+		var maxdepth = ui.values[1];
+		plotQuakes(mindepth,maxdepth,whichSlider);
+      }
+    });
+  });
+
+$(function() {
+    $("#scale").slider({
+      range: true,
+      min: 0,
+      max: 10,
+      values: [0, 10],
+      slide: function(event, ui) {
+		var whichSlider = "scale"
+		var minscale = ui.values[0];
+		var maxscale = ui.values[1];
+		plotQuakes(minscale,maxscale,whichSlider);
+      }
+    });
+  });
+
+$(function() {
+    $("#rad").slider({
+      min: 1,
+      max: 5,
+      value: 2,
+      slide: function(event, ui) {
+		var whichSlider = "rad"
+		var radius = ui.value;
+		plotQuakes(radius,0,whichSlider);
+      }
+    });
+  });
+
+$(function() {
+    $("#boxes").slider({
+      min: 50,
+      max: 100,
+      value: 50,
+      slide: function(event, ui) {
+		var checkbox = document.getElementById("showgrid");
+		if (checkbox.checked == true){
+			var boxes = ui.value;
+			plotGrid(boxes);
+		}
+      }
+    });
+  });
+
+var svgContainer = d3.select("#grid").append("svg")
+									.attr("width",1200)
+									.attr("height", 700);
+
+function showGrid(){
+	var checkbox = document.getElementById("showgrid");
+	if (checkbox.checked == false){
+		svgContainer.selectAll("*").remove();
+	} else if(checkbox.checked == true){
+		var boxes = parseInt(document.getElementById("gridsize").innerHTML);
+		plotGrid(boxes);
+	}
+}
+
+function plotGrid(boxes){
+	document.getElementById("gridsize").innerHTML=boxes
+	svgContainer.selectAll("*").remove();
+	var x = 0
+	var y = 0
+	for (i = 0; i < 24; i++){
+		var line = svgContainer.append("line")
+						 .attr("x1", x)
+						 .attr("y1",0)
+						 .attr("x2", x)
+						 .attr("y2",700)
+						 .attr("stroke-width", 2)
+						 .attr("stroke","black");
+		x = x + parseInt(boxes);
+		var line = svgContainer.append("line")
+						 .attr("x1", 0)
+						 .attr("y1",y)
+						 .attr("x2", 1200)
+						 .attr("y2",y)
+						 .attr("stroke-width", 2)
+						 .attr("stroke","black");
+		y = y + parseInt(boxes);
+	}
+}
+function generateHeatmap(){d3.tsv("./QuakeData.tsv",function(data){
+	var checkbox = document.getElementById("showheatmap");
+	if(checkbox.checked == false){
+		document.getElementById("heatmap").innerHTML=""
+	} else if(checkbox.checked == true){
+	document.getElementById("heatmap").innerHTML=""
+	var startyear = document.getElementById("startyear").innerHTML;
+	var endyear = document.getElementById("endyear").innerHTML;
+	var startlat = document.getElementById("startlat").innerHTML;
+	var endlat = document.getElementById("endlat").innerHTML;
+	var startlon = document.getElementById("startlon").innerHTML;
+	var endlon = document.getElementById("endlon").innerHTML;
+	var startdepth = document.getElementById("startdepth").innerHTML;
+	var enddepth = document.getElementById("enddepth").innerHTML;
+	var heatmapInstance = h337.create({container: document.getElementById('heatmap')});
+	
+	if (document.getElementById("cat1").checked){
+	
+		//var heatmapInstance = h337.create({container: document.getElementById('container')});
+		var points = [];
+	
+		data.forEach(function(d){
+			d.latitude = +d.latitude;
+			d.longitude = +d.longitude;
+			d.depth = +d.depth;
+			d.scale = +d.scale
+			var yval = (Math.floor((d.latitude*-3.5)+357.21));
+			var xval = (Math.floor((d.longitude*3.5)+480));
+			if (d.scale <= 10 && d.depth > startdepth && d.depth < enddepth && d.year >= startyear && d.year <= endyear && d.latitude <= endlat && d.latitude >= startlat && d.longitude >= startlon && d.longitude <= endlon){
+				var point = {
+					x: xval,
+					y: yval,
+					value: 0.5
+				};
+				points.push(point);
+				//points.push({x:100, y:100, value:100})
+			}
+			});
+			var data = {
+				max: 50,
+				data: points
+			};
+			heatmapInstance.setData(data);
+
+	} else if (document.getElementById("cat2").checked){
+		//var heatmapInstance = h337.create({container: document.getElementById('container')});
+		var points = [];
+	
+		data.forEach(function(d){
+			d.latitude = +d.latitude;
+			d.longitude = +d.longitude;
+			d.depth = +d.depth;
+			d.scale = +d.scale;
+			var yval = (Math.floor((d.latitude*-10.189)+657.21));
+			var xval = (Math.floor((d.longitude*10.157)+1098.9));
+			if (d.scale <= 2 && d.scale >= 1 && d.depth > startdepth && d.depth < enddepth && d.year >= startyear && d.year <= endyear && d.latitude <= endlat && d.latitude >= startlat && d.longitude >= startlon && d.longitude <= endlon){
+				var point = {
+					x: xval,
+					y: yval,
+					value: 2
+				};
+				points.push(point);
+			}
+			});
+			var data = {
+				max: 50,
+				data: points
+			};
+			heatmapInstance.setData(data);
+	} else if (document.getElementById("cat3").checked){
+		//var heatmapInstance = h337.create({container: document.getElementById('container')});
+		var points = [];
+	
+		data.forEach(function(d){
+			d.latitude = +d.latitude;
+			d.longitude = +d.longitude;
+			d.depth = +d.depth;
+			d.scale = +d.scale
+			var yval = (Math.floor((d.latitude*-10.189)+657.21));
+			var xval = (Math.floor((d.longitude*10.157)+1098.9));
+			if (d.scale <= 3 && d.scale >= 2 && d.depth > startdepth && d.depth < enddepth && d.year >= startyear && d.year <= endyear && d.latitude <= endlat && d.latitude >= startlat && d.longitude >= startlon && d.longitude <= endlon){
+				var point = {
+					x: xval,
+					y: yval,
+					value: 3
+				};
+				points.push(point);
+			}
+			});
+			var data = {
+				max: 50,
+				data: points
+			};
+			heatmapInstance.setData(data);
+	} else if (document.getElementById("cat4").checked){
+		//var heatmapInstance = h337.create({container: document.getElementById('container')});
+		var points = [];
+	
+		data.forEach(function(d){
+			d.latitude = +d.latitude;
+			d.longitude = +d.longitude;
+			d.depth = +d.depth;
+			d.scale = + d.scale;
+			var yval = (Math.floor((d.latitude*-10.189)+657.21));
+			var xval = (Math.floor((d.longitude*10.157)+1098.9));
+			if (d.scale <= 4 && d.scale >= 3 && d.depth > startdepth && d.depth < enddepth && d.year >= startyear && d.year <= endyear && d.latitude <= endlat && d.latitude >= startlat && d.longitude >= startlon && d.longitude <= endlon){
+				var point = {
+					x: xval,
+					y: yval,
+					value: 6
+				};
+				points.push(point);
+			}
+			});
+			var data = {
+				max: 50,
+				data: points
+			};
+			heatmapInstance.setData(data);
+	} else if (document.getElementById("cat5").checked){
+		//var heatmapInstance = h337.create({container: document.getElementById('container')});
+		var points = [];
+	
+		data.forEach(function(d){
+			d.latitude = +d.latitude;
+			d.longitude = +d.longitude;
+			d.depth = +d.depth;
+			d.scale = +d.scale
+			var yval = (Math.floor((d.latitude*-10.189)+657.21));
+			var xval = (Math.floor((d.longitude*10.157)+1098.9));
+			if (d.scale <= 6 && d.scale >= 5 && d.depth > startdepth && d.depth < enddepth && d.year >= startyear && d.year <= endyear && d.latitude <= endlat && d.latitude >= startlat && d.longitude >= startlon && d.longitude <= endlon){
+				var point = {
+					x: xval,
+					y: yval,
+					value: 20
+				};
+				points.push(point);
+			}
+			});
+			var data = {
+				max: 50,
+				data: points
+			};
+			heatmapInstance.setData(data);
+	} else if (document.getElementById("cat6").checked){
+		//var heatmapInstance = h337.create({container: document.getElementById('container')});
+		var points = [];
+	
+		data.forEach(function(d){
+			d.latitude = +d.latitude;
+			d.longitude = +d.longitude;
+			d.depth = +d.depth;
+			d.scale = +d.scale
+			var yval = (Math.floor((d.latitude*-10.189)+657.21));
+			var xval = (Math.floor((d.longitude*10.157)+1098.9));
+			if (d.scale <= 7 && d.scale >= 6 && d.depth > startdepth && d.depth < enddepth && d.year >= startyear && d.year <= endyear && d.latitude <= endlat && d.latitude >= startlat && d.longitude >= startlon && d.longitude <= endlon){
+				var point = {
+					x: xval,
+					y: yval,
+					value: 20
+				};
+				points.push(point);
+			}
+			});
+			var data = {
+				max: 50,
+				data: points
+			};
+			heatmapInstance.setData(data);
+	} else if (document.getElementById("cat7").checked){
+		//var heatmapInstance = h337.create({container: document.getElementById('container')});
+		var points = [];
+	
+		data.forEach(function(d){
+			d.latitude = +d.latitude;
+			d.longitude = +d.longitude;
+			d.depth = +d.depth;
+			d.scale = +d.scale
+			var yval = (Math.floor((d.latitude*-10.189)+657.21));
+			var xval = (Math.floor((d.longitude*10.157)+1098.9));
+			if (d.scale <= 8 && d.scale >= 7 && d.depth > startdepth && d.depth < enddepth && d.year >= startyear && d.year <= endyear && d.latitude <= endlat && d.latitude >= startlat && d.longitude >= startlon && d.longitude <= endlon){
+				var point = {
+					x: xval,
+					y: yval,
+					value: 20
+				};
+				points.push(point);
+			}
+			});
+			var data = {
+				max: 50,
+				data: points
+			};
+			heatmapInstance.setData(data);
+	} else if (document.getElementById("cat8").checked){
+		//var heatmapInstance = h337.create({container: document.getElementById('container')});
+		var points = [];
+	
+		data.forEach(function(d){
+			d.latitude = +d.latitude;
+			d.longitude = +d.longitude;
+			d.depth = +d.depth;
+			d.scale = +d.scale
+			var yval = (Math.floor((d.latitude*-10.189)+657.21));
+			var xval = (Math.floor((d.longitude*10.157)+1098.9));
+			if (d.scale <= 9 && d.scale >= 8 && d.depth > startdepth && d.depth < enddepth && d.year >= startyear && d.year <= endyear && d.latitude <= endlat && d.latitude >= startlat && d.longitude >= startlon && d.longitude <= endlon){
+				var point = {
+					x: xval,
+					y: yval,
+					value: 20
+				};
+				points.push(point);
+			}
+			});
+			var data = {
+				max: 50,
+				data: points
+			};
+			heatmapInstance.setData(data);
+	} else if (document.getElementById("cat9").checked){
+		//var heatmapInstance = h337.create({container: document.getElementById('container')});
+		var points = [];
+	
+		data.forEach(function(d){
+			d.latitude = +d.latitude;
+			d.longitude = +d.longitude;
+			d.depth = +d.depth;
+			d.scale = +d.scale
+			var yval = (Math.floor((d.latitude*-10.189)+657.21));
+			var xval = (Math.floor((d.longitude*10.157)+1098.9));
+			if (d.scale <= 10 && d.scale >= 9 && d.depth > startdepth && d.depth < enddepth && d.year >= startyear && d.year <= endyear && d.latitude <= endlat && d.latitude >= startlat && d.longitude >= startlon && d.longitude <= endlon){
+				var point = {
+					x: xval,
+					y: yval,
+					value: 20
+				};
+				points.push(point);
+			}
+			});
+			var data = {
+				max: 50,
+				data: points
+			};
+			heatmapInstance.setData(data);
+	} else if (document.getElementById("cat10").checked){
+		//var heatmapInstance = h337.create({container: document.getElementById('container')});
+		var points = [];
+	
+		data.forEach(function(d){
+			d.latitude = +d.latitude;
+			d.longitude = +d.longitude;
+			d.depth = +d.depth;
+			d.scale = +d.scale
+			var yval = (Math.floor((d.latitude*-10.189)+657.21));
+			var xval = (Math.floor((d.longitude*10.157)+1098.9));
+			if (d.scale >= 10 && d.depth > startdepth && d.depth < enddepth && d.year >= startyear && d.year <= endyear && d.latitude <= endlat && d.latitude >= startlat && d.longitude >= startlon && d.longitude <= endlon){
+				var point = {
+					x: xval,
+					y: yval,
+					value: 20
+				};
+				points.push(point);
+			}
+			});
+			var data = {
+				max: 50,
+				data: points
+			};
+			heatmapInstance.setData(data);
+	}	
+	}
+})}
+
+function heatmapEvolution(){
+	document.getElementById("heatmap").innerHTML=""
+	initialYear1 = parseInt(document.getElementById("initialYear1").value);
+	initialYear2 = parseInt(document.getElementById("initialYear2").value);
+	finalYear1 = document.getElementById("finalYear1").value;
+	gap = finalYear1-initialYear1;
+	counter = 0;
+	var interval = window.setInterval(function(){
+	counter += 1;
+	if(counter == gap){clearInterval(interval)}
+	initialYear1 += 1;
+	initialYear2 += 1;
+	$("#year").slider("values",[initialYear1,initialYear2]);
+	document.getElementById("startyear").innerHTML = initialYear1;
+	document.getElementById("endyear").innerHTML = initialYear2;
+	generateHeatmap();
+	},10);
+}
+
+  var map = new Datamap({element: document.getElementById('container'),
+	
+  fills: {defaultFill: '#335C33', 'zero': '#cccc33', 'one': '#33cc59', 'two': '#33cca6', 'three': '#33a6cc', 'four': '#3359cc', 'five': '#5933cc', 'six': '#a633cc', 'seven': '#cc33a6', 'eight': '#cc3359', 'nine': '#cc3333', 'ten': '#000000'},
+  setProjection: function(element) {
+    var projection = d3.geo.equirectangular()
+      .center([0, 30])
+      .scale(200)
+      //.rotate([150,0])
+    var path = d3.geo.path()
+      .projection(projection);
+    
+    return {path: path, projection: projection};
+  }
+  });
+
+  function plotQuakes(min,max,whichSlider){d3.tsv("./QuakeData.tsv",function(data){
+	
+	if (whichSlider == "year"){
+		var minyear = min;
+		var maxyear = max;
+		var minlat = document.getElementById("startlat").innerHTML;
+		var maxlat = document.getElementById("endlat").innerHTML;
+		var minlon = document.getElementById("startlon").innerHTML;
+		var maxlon = document.getElementById("endlon").innerHTML;
+		var mindepth = document.getElementById("startdepth").innerHTML;
+		var maxdepth = document.getElementById("enddepth").innerHTML;
+		var radius = document.getElementById("radius").innerHTML;
+		var minscale = document.getElementById("startscale").innerHTML;
+		var maxscale = document.getElementById("endscale").innerHTML;
+	} else if (whichSlider == "lat"){
+		var minlat = min;
+		var maxlat = max;
+		var minyear = document.getElementById("startyear").innerHTML;
+		var maxyear = document.getElementById("endyear").innerHTML;
+		var minlon = document.getElementById("startlon").innerHTML;
+		var maxlon = document.getElementById("endlon").innerHTML;
+		var mindepth = document.getElementById("startdepth").innerHTML;
+		var maxdepth = document.getElementById("enddepth").innerHTML;
+		var radius = document.getElementById("radius").innerHTML;
+		var minscale = document.getElementById("startscale").innerHTML;
+		var maxscale = document.getElementById("endscale").innerHTML;
+	} else if (whichSlider == "lon"){
+		var minlon = min;
+		var maxlon = max;
+		var minyear = document.getElementById("startyear").innerHTML;
+		var maxyear = document.getElementById("endyear").innerHTML;
+		var minlat = document.getElementById("startlat").innerHTML;
+		var maxlat = document.getElementById("endlat").innerHTML;
+		var mindepth = document.getElementById("startdepth").innerHTML;
+		var maxdepth = document.getElementById("enddepth").innerHTML;
+		var radius = document.getElementById("radius").innerHTML;
+		var minscale = document.getElementById("startscale").innerHTML;
+		var maxscale = document.getElementById("endscale").innerHTML;
+	} else if (whichSlider == "depth"){
+		var mindepth = min;
+		var maxdepth = max;
+		var minyear = document.getElementById("startyear").innerHTML;
+		var maxyear = document.getElementById("endyear").innerHTML;
+		var minlat = document.getElementById("startlat").innerHTML;
+		var maxlat = document.getElementById("endlat").innerHTML;
+		var minlon = document.getElementById("startlon").innerHTML;
+		var maxlon = document.getElementById("endlon").innerHTML;
+		var radius = document.getElementById("radius").innerHTML;
+		var minscale = document.getElementById("startscale").innerHTML;
+		var maxscale = document.getElementById("endscale").innerHTML;
+	} else if (whichSlider == "scale"){
+		var minscale = min;
+		var maxscale = max;
+		var minyear = document.getElementById("startyear").innerHTML;
+		var maxyear = document.getElementById("endyear").innerHTML;
+		var minlat = document.getElementById("startlat").innerHTML;
+		var maxlat = document.getElementById("endlat").innerHTML;
+		var minlon = document.getElementById("startlon").innerHTML;
+		var maxlon = document.getElementById("endlon").innerHTML;
+		var radius = document.getElementById("radius").innerHTML;
+		var mindepth = document.getElementById("startdepth").innerHTML;
+		var maxdepth = document.getElementById("enddepth").innerHTML;
+	} else if (whichSlider == "rad"){
+		var radius = min;
+		var minyear = document.getElementById("startyear").innerHTML;
+		var maxyear = document.getElementById("endyear").innerHTML;
+		var minlat = document.getElementById("startlat").innerHTML;
+		var maxlat = document.getElementById("endlat").innerHTML;
+		var minlon = document.getElementById("startlon").innerHTML;
+		var maxlon = document.getElementById("endlon").innerHTML;
+		var mindepth = document.getElementById("startdepth").innerHTML;
+		var maxdepth = document.getElementById("enddepth").innerHTML;
+		var minscale = document.getElementById("startscale").innerHTML;
+		var maxscale = document.getElementById("endscale").innerHTML;
+	}
+
+  document.getElementById("startyear").innerHTML=minyear
+  document.getElementById("endyear").innerHTML=maxyear
+  document.getElementById("startlat").innerHTML=minlat
+  document.getElementById("endlat").innerHTML=maxlat
+  document.getElementById("startlon").innerHTML=minlon
+  document.getElementById("endlon").innerHTML=maxlon
+  document.getElementById("startdepth").innerHTML=mindepth
+  document.getElementById("enddepth").innerHTML=maxdepth
+  document.getElementById("startscale").innerHTML=minscale
+  document.getElementById("endscale").innerHTML=maxscale
+  document.getElementById("radius").innerHTML=radius
+  
+  var bub = [];
+
+  data.forEach(function(d){
+  d.year = +d.year;
+  d.latitude = +d.latitude;
+  d.longitude = +d.longitude;
+  d.depth = +d.depth;
+  d.scale = +d.scale;
+  d.radius = radius;
+  if(d.scale == 10){
+	d.fillKey = 'ten';
+  } else if (d.scale < 10 && d.scale >= 9){
+	d.fillKey = 'nine';
+  } else if (d.scale < 9 && d.scale >= 8){
+	d.fillKey = 'eight';
+  } else if (d.scale < 8 && d.scale >= 7){
+	d.fillKey = 'seven';
+  } else if (d.scale < 7 && d.scale >= 6){
+	d.fillKey = 'six';
+  } else if (d.scale < 6 && d.scale >= 5){
+	d.fillKey = 'five';
+  } else if (d.scale < 5 && d.scale >= 4){
+	d.fillKey = 'four';
+  } else if (d.scale < 4 && d.scale >= 3){
+	d.fillKey = 'three';
+  } else if (d.scale < 3 && d.scale >= 2){
+	d.fillKey = 'two';
+  } else if (d.scale < 2 && d.scale >= 1){
+	d.fillKey = 'one';
+  } else if (d.scale < 1 && d.scale >= 0){
+	d.fillKey = 'zero';
+  }
+  d.borderWidth = 0;
+
+  if(d.longitude >= minlon && d.longitude <= maxlon && d.latitude >= minlat && d.latitude <= maxlat && d.depth >= mindepth && d.depth <= maxdepth && d.scale <= maxscale && d.scale >= minscale && d.year >= minyear && d.year <= maxyear){
+   bub.push(d);
+  }
+  });
+  
+					  
+  map.bubbles(bub);
+  });
+  };
+
+plotQuakes(1900,2007,"year");
+  
+</script>
+
+</html>
