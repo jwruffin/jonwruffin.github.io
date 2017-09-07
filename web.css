@@ -1,0 +1,144 @@
+
+#footnote{
+	position:absolute;
+	top: 0;
+	left:0;
+	height: 15px;
+	width:100%;
+	background-color:rgb(255,255,255);
+	border: 5px;
+	border-image:url("Resources/TopBorderImage.svg") 10% 10% 10% 10% stretch;
+	border-style: solid;
+	border-width 5px;
+
+	font-family: Times;
+	font-size: 12px;
+	text-align: center;
+	color:rgb(150,150,150);
+
+}
+
+#footframe{
+	position:absolute;
+	bottom: 0;
+	left:0;
+	height: 20px;
+	width:100%;
+}
+
+#leftframe{
+	position: absolute;
+	left: 10px;
+	top: 145px;
+	height: auto;
+	width: 200px;
+
+	overflow: hidden;
+
+	backgroun-color:  rgb(255,255,255);
+
+	font-family: Times;
+	font-size: 18px;
+	text-align: left;
+	color:  rgb(50,100,190);	
+}
+#rightframe{
+	position: absolute;
+	right: 10px;
+	top: 145px;
+	bottom: 10px;
+	height: auto;
+	width: 200px;
+	overflow: hidden;
+
+	font-family: Times;
+	font-size: 18px;
+	text-align: left;
+	color:  rgb(50,100,190);
+
+}
+#topframe{
+	position: absolute;
+	left: 10px;
+	top: 35px;
+	height: 100px;
+	width: 100%;
+	overflow: hidden;
+
+	background-color: rgb(50,100,190);
+
+}
+#mainframe{
+	position: absolute; 
+	left: 220px;
+	right: 220px;
+	top: 145px;
+	bottom: 10px;
+
+	height: auto;
+	width: auto;
+	overflow: visible;
+
+	border-radius:10px;
+
+	background-color: rgb(255,255,255);
+
+	text-align: justify;
+
+}
+.innertube{
+	margin:10px;
+	height: 100%;
+}
+.maintube{
+	margin:10px;
+	height: 90%;
+}
+.bodytext{
+	frameBorder: 0;
+	border: 0;
+	width: 100%;
+	height: 100%;
+	overflow: auto;
+}
+body{
+	margin: 0;
+	padding: 0;
+	border: 0;
+	overflow: hidden;
+	height: 100%; 
+	max-height: 100%; 
+
+	background-color: rgb(255,255,255);
+}
+.heading{
+
+	position: absolute;
+	top: 10px;
+	left: 60px;
+
+	height: 90px;
+	width: auto;
+
+}
+h1{
+	position: absolute;
+	top: 0;
+	left: 30px;
+	font-family: arial;
+
+	font-size: 3em;
+	color: rgb(0,0,0);
+}
+p{
+	font-family:arial;
+}
+a:visited{
+	color: rgb(50,100,190);
+
+
+}
+a{
+	color: rgb(50,100,190);
+
+}

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset
+      xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
+            http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
+<!-- created with Free Online Sitemap Generator www.xml-sitemaps.com -->
+
+<url>
+  <loc>http://portfolio.ctcii.com/</loc>
+  <lastmod>2015-08-02T08:50:34+00:00</lastmod>
+</url>
+<url>
+  <loc>http://portfolio.ctcii.com/index.html</loc>
+  <lastmod>2015-08-02T08:50:34+00:00</lastmod>
+</url>
+<url>
+  <loc>http://portfolio.ctcii.com/projects.html</loc>
+  <lastmod>2015-08-09T08:23:08+00:00</lastmod>
+</url>
+<url>
+  <loc>http://portfolio.ctcii.com/Resume.pdf</loc>
+  <lastmod>2015-07-06T21:46:46+00:00</lastmod>
+</url>
+<url>
+  <loc>http://portfolio.ctcii.com/contact.html</loc>
+  <lastmod>2015-08-02T09:01:00+00:00</lastmod>
+</url>
+<url>
+  <loc>http://portfolio.ctcii.com/hurricanes.html</loc>
+  <lastmod>2015-11-04T22:29:51+00:00</lastmod>
+</url>
+<url>
+  <loc>http://portfolio.ctcii.com/earthquakes.html</loc>
+  <lastmod>2015-08-02T23:26:55+00:00</lastmod>
+</url>
+<url>
+  <loc>http://portfolio.ctcii.com/moon.html</loc>
+  <lastmod>2015-08-09T08:30:35+00:00</lastmod>
+</url>
+</urlset>
